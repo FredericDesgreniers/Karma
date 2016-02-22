@@ -5,19 +5,34 @@
  */
 package io.winterdev.server.content;
 
+import net.dean.jraw.models.Submission;
+
 /**
  *
  * @author frede
  */
 public abstract class Content {    
-    protected String title,url;
+    protected String title,url,reddit;
+    private Submission submission;
     private int id;
     public Content(int id,String title, String url){
         this.title = title;
         this.url = url;
         this.id = id;
+        reddit = "";
     }
-    
+    public void setSubmission(Submission submission){
+        this.submission = submission;
+    }
+    public Submission getSubmission(){
+        return this.submission;
+    }
+    public void setReddit(String reddit){
+        this.reddit = reddit;
+    }
+    public String getReddit(){
+        return reddit;
+    }
     public String getTitle(){
         return title;
     }

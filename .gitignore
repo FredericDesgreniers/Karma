@@ -53,3 +53,4 @@ Server/src/io/winterdev/server/Private.java
 Server/store/winterkarma.jar
 Server/dist/Server.jar
 Client/build/classes/io/winterdev/client/Private.class
+*.class

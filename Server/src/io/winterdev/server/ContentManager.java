@@ -31,11 +31,12 @@ public class ContentManager {
     public ContentManager(Server server){
         this.server  = server;
         sources = new ArrayList();
+        addSources();
     }
     
     private void addSources(){
         try {
-            SourceYoutube theScore = new SourceYoutube("theScore Esports","",5000,new Filter(new WeightedFilter[]{
+            SourceYoutube theScore = new SourceYoutube(server, "theScore Esports","UCSCoziKHqjqbox3Fv3Pb4BA",10000,new Filter(new WeightedFilter[]{
                 
             }),server.getData().getUniqueStatement());
             addSource(theScore);

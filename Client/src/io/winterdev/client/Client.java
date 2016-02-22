@@ -34,14 +34,17 @@ public class Client {
                  }
                  String[] args = input.split(";;");
                  System.out.println(input);
-                 if(args.length>0){
-                     String command = args[0];
+                 if(args.length>1){
+                     String type = args[0];
+                     String command = args[1];
+                     
                      switch(command){
-                         case "new":
+                         case "waiting":
                              if(args.length>2){
                                  String title = args[2];
                                  int id = Integer.valueOf(args[1]);
-                                 new AlertFrame(this,id,title);
+                                 if(type.equalsIgnoreCase("alert")) 
+                                    new AlertWaiting(this,id,title);
                              }
                              break;
                      }

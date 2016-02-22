@@ -5,9 +5,15 @@
  */
 package io.winterdev.server.content.source;
 
+import io.winterdev.server.Server;
 import io.winterdev.server.content.Content;
 import io.winterdev.server.content.source.filter.Filter;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,18 +25,45 @@ public abstract class Source extends Thread{
     private boolean fetching = true;
     private Filter filter;
     protected Statement statement;
-    public Source(String name, int delay, Filter filter,Statement statement){
+    private List<String> urlBuffer;
+    private Server server;
+    
+    public Source(Server server, String name, int delay, Filter filter,Statement statement){
         this.name = name;
         this.delay = delay;
         this.filter = filter;
+        urlBuffer = new ArrayList();
+        this.server = server;
+        this.statement = statement;
     }
     
     protected abstract void fetch();
     
     protected void checkConent(Content content){
+        if(urlBuffer.contains(content.getUrl()))return;
+        urlBuffer.add(content.getUrl());
+        try{
+            if(server.getData().checkContent(statement, content))return;
+        }catch(Exception ex){
+            fetching = false;
+            ex.printStackTrace();
+            System.out.println("STOPPED "+name+" :: COULD NOT CHECK SQL");
+        }
+        
         int weight = filter.getWeight(content.getTitle().toLowerCase());
         if(weight > 0){
+            server.getReddit().submit(content);
+        }else{
+            server.getReddit().addWaiting(content);
+        }
+        
+        try {
             
+            server.getData().insertContent(statement, content);
+        } catch (SQLException ex) {
+            fetching = false;
+            ex.printStackTrace();
+            System.out.println("STOPPED "+name+" :: COULD NOT INSERT (woudl cause repost)");
         }
         
     }
@@ -38,10 +71,11 @@ public abstract class Source extends Thread{
     @Override
     public void run(){
         while(fetching){
+            fetch();
             try{
                 Thread.sleep(delay);
             }catch(Exception e){};
-            fetch();
+            
         }
     }
 }

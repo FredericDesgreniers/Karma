@@ -69,4 +69,7 @@ public class MainServer extends Thread{
     public List<ClientConnection> getClients(){
         return this.clients;
     }
+    public Server getServer(){
+        return server;
+    }
 }

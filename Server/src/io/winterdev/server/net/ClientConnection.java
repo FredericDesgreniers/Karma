@@ -46,15 +46,22 @@ public class ClientConnection extends Thread{
                     }
                     String[] args = input.split(";;");
                     if(args.length>0){
+                        int id = -1;
+                        if(args.length>1)
+                            try{
+                                id=Integer.valueOf(args[1]);
+                            }catch(Exception e){};
                         switch(args[0]){
                             case "post":
                                 if(args.length>1){
-                                    System.out.println("POSTING "+Integer.valueOf(args[1]));
+                                    server.getServer().getReddit().post(id);
                                 }
                                 break;
                             case "spoil":
                                 if(args.length>1){
-                                    System.out.println("SPOIL "+Integer.valueOf(args[1]));
+                                    server.getServer().getReddit().post(id);
+                                    
+                                    server.getServer().getReddit().addSpoiler(id);
                                 }
                                 break;
                             case "remove":

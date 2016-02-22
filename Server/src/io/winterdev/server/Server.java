@@ -7,6 +7,10 @@ package io.winterdev.server;
 
 import io.winterdev.server.net.MainServer;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.dean.jraw.http.NetworkException;
+import net.dean.jraw.http.oauth.OAuthException;
 
 /**
  *  Manages the program
@@ -16,14 +20,21 @@ public class Server {
     private MainServer mainServer;
     private ContentManager contentManager;
     private DataManager data;
+    private RedditManager reddit;
     
     public Server() throws SQLException{
         
         data = new DataManager(this);
+        try {
+            reddit = new RedditManager(this);
+        } catch (Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
         mainServer = new MainServer(this);
         contentManager = new ContentManager(this);
        
-        //mainServer.start();
+        mainServer.start();
     }
     public ContentManager getContentManager(){
         return contentManager;
@@ -33,6 +44,9 @@ public class Server {
     }
     public DataManager getData(){
         return data;
+    }
+    public RedditManager getReddit(){
+        return reddit;
     }
     
     

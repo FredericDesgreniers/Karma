@@ -23,6 +23,7 @@ import net.dean.jraw.http.oauth.OAuthData;
 import net.dean.jraw.http.oauth.OAuthException;
 import net.dean.jraw.managers.AccountManager;
 import net.dean.jraw.managers.ModerationManager;
+import net.dean.jraw.models.FlairTemplate;
 import net.dean.jraw.models.Listing;
 import net.dean.jraw.models.Submission;
 import net.dean.jraw.paginators.Sorting;
@@ -34,12 +35,16 @@ import net.dean.jraw.paginators.TimePeriod;
  * @author frede
  */
 public class RedditManager {
+    public static boolean blockSubmissions = true;
+    
     private UserAgent agent;
     private RedditClient client;
     private Credentials credentials;
     private OAuthData authData;
-    public static final String subreddit = "leagueoflegends";
+    public static final String subreddit = "winterdev";
     private Server server;
+    
+    
     
     public List<Content> waiting;
     public List<Content> submitted;
@@ -52,6 +57,7 @@ public class RedditManager {
         authData = client.getOAuthHelper().easyAuth(credentials);
         client.authenticate(authData);
         client.me();
+        
         Timer timer = new Timer();
         timer.schedule(new TimerTask(){
             public void run(){
@@ -64,19 +70,22 @@ public class RedditManager {
         waiting = new ArrayList();
         submitted = new ArrayList();
     }
-    
+
+    public RedditClient getClient(){
+        return client;
+    }
     
     public synchronized void refresh() throws OAuthException{
         credentials = Credentials.script(Private.REDDIT_USERNAME, Private.REDDIT_PASSWORD, Private.REDDIT_CLIENT_ID, Private.REDDIT_SECRET);
         authData = client.getOAuthHelper().easyAuth(credentials);
         client.authenticate(authData);
     }
-public void verifyContent(String sub,Submission s){
+public void verifyContent(Submission s){
         SubredditPaginator sp = new SubredditPaginator(client);
         sp.setLimit(10);
         sp.setSorting(Sorting.NEW);
         sp.setTimePeriod(TimePeriod.HOUR);
-        sp.setSubreddit(sub);
+        sp.setSubreddit(subreddit);
         
         sp.next(true);
         Listing<Submission> list = sp.getCurrentListing();
@@ -86,7 +95,7 @@ public void verifyContent(String sub,Submission s){
                 after=true;
             }else
             if(after)
-            if(sub1.getUrl().contains(s.getUrl().replace("https://", "").trim())){
+            if(sub1.getUrl().contains(s.getUrl().replace("https://", "").replace("http://","").trim())){
                 try {
                     ModerationManager manager = new ModerationManager(client);
                     manager.delete(s);
@@ -99,7 +108,10 @@ public void verifyContent(String sub,Submission s){
             }
         }
     }
-    public void postConent(Content content){
+    public void submit(Content content){
+        if(blockSubmissions)
+            return;
+        
         String redditLink="";
         try{
         String url = content.getUrl();
@@ -108,10 +120,11 @@ public void verifyContent(String sub,Submission s){
         AccountManager.SubmissionBuilder sub = new AccountManager.SubmissionBuilder(new URL(url),subreddit,title);
         sub.resubmit(false);
         System.out.println("SUBMITTING CONTENT: "+title+"  | "+url+" to /r/"+subreddit);
+        
         Submission s = manager.submit(sub);
         
         redditLink = s.getPermalink();
-        
+        content.setReddit(redditLink);
         submitted.add(content);
         
         try {
@@ -120,7 +133,7 @@ public void verifyContent(String sub,Submission s){
         } catch (InterruptedException ex) {
             Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        verifyContent(subreddit,s);
+        verifyContent(s);
         }catch(MalformedURLException | NetworkException | ApiException e){
             Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, e);
             System.out.println("error summitting");
@@ -128,6 +141,39 @@ public void verifyContent(String sub,Submission s){
     }
     public void addWaiting(Content content){
         waiting.add(content);
+        server.getMainServer().send("alert;;waiting;;"+content.getId()+";;"+content.getTitle()+";;"+content.getUrl());
         
+    }
+    public void post(int id){
+        for(Content c:waiting){
+            if(c.getId() == id){
+                submit(c);
+                waiting.remove(c);
+            }
+        }
+        for(Content c:submitted){
+            if(c.getId() == id){
+                submitted.remove(c);
+            }
+        }
+    }
+    public void addSpoiler(int id){
+        try{
+        for(Content c:submitted){
+            if(c.getId() == id){
+                if(c.getSubmission()!=null){
+                    ModerationManager mod = new ModerationManager(client);
+                    AccountManager manager = new AccountManager(client);         
+                    for(FlairTemplate t1:manager.getFlairChoices(c.getSubmission())){
+                        if(t1.getText().toLowerCase().contains("spoiler")){
+                           mod.setFlair(subreddit, t1, "Spoiler",c.getSubmission());
+                            return;
+                      }
+                 }
+                     
+                }
+            }
+        }
+        }catch(Exception e){e.printStackTrace();};
     }
 }

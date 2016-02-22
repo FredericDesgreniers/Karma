@@ -14,11 +14,11 @@ import javax.swing.JLabel;
  *
  * @author frede
  */
-public class AlertFrame extends JFrame implements KeyListener{
+public class AlertWaiting extends JFrame implements KeyListener{
     Client client;
     String title;
     int id;
-    public AlertFrame(Client client, int id, String title){
+    public AlertWaiting(Client client, int id, String title){
         this.client = client;
         this.id = id;
         this.title = title;
@@ -47,7 +47,7 @@ public class AlertFrame extends JFrame implements KeyListener{
     public void keyPressed(KeyEvent ke) {
         System.out.println(ke.getKeyChar());
         switch(ke.getKeyChar()){
-            case 'p':
+            case 'a':
                 client.sendRaw("post;;"+id);
                 this.dispose();
                 break;
