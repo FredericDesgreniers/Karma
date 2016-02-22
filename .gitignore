@@ -45,3 +45,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.netbeans_automatic_build
+*.netbeans_update_resources
+Server/build/classes/io/winterdev/server/Private.class
+Client/src/io/winterdev/client/Private.java
+Server/src/io/winterdev/server/Private.java
+Server/store/winterkarma.jar
+Server/dist/Server.jar
+Client/build/classes/io/winterdev/client/Private.class
