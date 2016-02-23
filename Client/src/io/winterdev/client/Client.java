@@ -39,7 +39,7 @@ public class Client extends Application{
         network = new ClientNetwork(this);
         network.start();
         
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("WINTERDEV.IO Karma bot");
         primaryStage.setOnCloseRequest((WindowEvent t)->{
             Platform.exit();
             network.stop();
