@@ -20,7 +20,7 @@
 .listEl:hover{
     -fx-background-color:#3d3d3d;
 }
-elContextSub:hover{
+.elContextSub:hover{
     -fx-background-color:white;
 }
 .elSelected{
@@ -47,10 +47,43 @@ elContextSub:hover{
     -fx-color:red;
     -fx-font-size:40px;
     -fx-text-fill:white;
+    -fx-background-color:black;
+
+    -fx-alignment:center;
 }
 .alert{
     -fx-background-color:red;
+    -fx-spacing: 100;
 }
 .notification{
     -fx-background-color:black;
+}
+.alertOptions Button{
+    -fx-font-size:60px;
+    -fx-border-color:black;
+    -fx-border-width:5;
+
+}
+
+.alertOptions .alertAccept{
+    -fx-background-color:green;
+    -fx-text-fill:white;
+}
+.alertOptions .alertAccept:hover{
+    -fx-background-color:black;
+}
+.alertOptions .alertReject{
+    -fx-background-color:red;
+    -fx-text-fill:white;
+}
+.alertOptions .alertReject:hover{
+    -fx-background-color:black;
+}
+.alertOptions .alertSpoil{
+    -fx-background-color:yellow;
+
+}
+.alertOptions .alertSpoil:hover{
+    -fx-background-color:black;
+    -fx-text-fill:white;
 }
