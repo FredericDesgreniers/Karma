@@ -66,6 +66,7 @@ public class ClientConnection extends Thread{
                                 break;
                             case "remove":
                                 if(args.length>1){
+                                    server.getServer().getReddit().remove(id);
                                     System.out.println("REMOVE "+Integer.valueOf(args[1]));
                                 }
                                 break;

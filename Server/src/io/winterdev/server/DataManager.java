@@ -14,6 +14,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -38,10 +40,15 @@ public class DataManager {
             + "   title              TEXT,"
             + "   reddit             TEXT,"
             + "   type               TEXT,"
-            + "   url                TEXT)";
+            + "   url                TEXT,"
+            + "   fetchTime           timestamp default current_timestamp)";
         
         serverStm.execute(sqlCreate);
+        sqlCreate = "CREATE TABLE IF NOT EXISTS sms"
+            + "  (id           int PRIMARY KEY  AUTO_INCREMENT,"
+            + "   text              TEXT)";
         
+        serverStm.execute(sqlCreate);
         
     }
     public Statement getUniqueStatement() throws SQLException{
@@ -66,5 +73,16 @@ public class DataManager {
         stat.setString(3, content.getReddit());
         stat.setString(4, "CONTENT");
         stat.executeUpdate();
+    }
+    public List<String> getSmsList(Statement statement) throws SQLException{
+        List<String> smss = new ArrayList();
+        ResultSet rs = statement.executeQuery("SELECT text FROM sms");
+       
+        while(rs.next()){
+            
+              smss.add(rs.getString("text"));
+        }
+        statement.executeUpdate("DELETE FROM sms");
+        return smss;
     }
 }

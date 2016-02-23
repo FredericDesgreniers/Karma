@@ -5,6 +5,8 @@
  */
 package io.winterdev.server.content.source;
 
+import io.winterdev.server.ContentManager;
+import io.winterdev.server.Private;
 import io.winterdev.server.Server;
 import io.winterdev.server.content.Content;
 import io.winterdev.server.content.source.filter.Filter;
@@ -47,19 +49,23 @@ public abstract class Source extends Thread{
         }catch(Exception ex){
             fetching = false;
             ex.printStackTrace();
+            
             System.out.println("STOPPED "+name+" :: COULD NOT CHECK SQL");
+            return;
         }
-        
+       content.setId(ContentManager.getUniqueId());
         int weight = filter.getWeight(content.getTitle().toLowerCase());
         if(weight > 0){
             server.getReddit().submit(content);
         }else{
             server.getReddit().addWaiting(content);
+            server.getSms().sendSms(Private.PHONE_NUMBER, content.getId()+" WAITING "+content.getTitle());
         }
         
         try {
             
             server.getData().insertContent(statement, content);
+            System.out.println("INSERTED "+content.getTitle()+" : "+content.getUrl());
         } catch (SQLException ex) {
             fetching = false;
             ex.printStackTrace();

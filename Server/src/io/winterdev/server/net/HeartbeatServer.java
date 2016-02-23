@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * @author frede
  */
 public class HeartbeatServer extends Thread{
-    public static final int DELAY=5000;
+    public static final int DELAY=15000;
     private MainServer server;
     private boolean running = true;
     public HeartbeatServer(MainServer server){

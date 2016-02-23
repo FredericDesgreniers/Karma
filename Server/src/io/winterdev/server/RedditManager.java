@@ -35,13 +35,13 @@ import net.dean.jraw.paginators.TimePeriod;
  * @author frede
  */
 public class RedditManager {
-    public static boolean blockSubmissions = true;
+    public static boolean blockSubmissions = false;
     
     private UserAgent agent;
     private RedditClient client;
     private Credentials credentials;
     private OAuthData authData;
-    public static final String subreddit = "winterdev";
+    public static final String subreddit = "leagueoflegends";
     private Server server;
     
     
@@ -80,7 +80,7 @@ public class RedditManager {
         authData = client.getOAuthHelper().easyAuth(credentials);
         client.authenticate(authData);
     }
-public void verifyContent(Submission s){
+public boolean verifyContent(Submission s){
         SubredditPaginator sp = new SubredditPaginator(client);
         sp.setLimit(10);
         sp.setSorting(Sorting.NEW);
@@ -100,6 +100,7 @@ public void verifyContent(Submission s){
                     ModerationManager manager = new ModerationManager(client);
                     manager.delete(s);
                     System.out.println(s.getTitle()+" DELETED FROM "+s.getSubredditName());
+                    return false;
                 } catch (NetworkException ex) {
                     Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ApiException ex) {
@@ -107,6 +108,7 @@ public void verifyContent(Submission s){
                 }
             }
         }
+        return true;
     }
     public void submit(Content content){
         if(blockSubmissions)
@@ -125,7 +127,7 @@ public void verifyContent(Submission s){
         
         redditLink = s.getPermalink();
         content.setReddit(redditLink);
-        submitted.add(content);
+        
         
         try {
             Thread.sleep(2000);
@@ -133,10 +135,16 @@ public void verifyContent(Submission s){
         } catch (InterruptedException ex) {
             Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        verifyContent(s);
+        if(verifyContent(s)){
+            server.getSms().sendSms(Private.PHONE_NUMBER, content.getId()+" REDDIT "+content.getTitle());
+            submitted.add(content);
+            server.getMainServer().send("alert;;submitted;;"+content.getId()+";;"+content.getTitle()+";;"+content.getUrl());
+        }else{
+            server.getSms().sendSms(Private.PHONE_NUMBER, content.getId()+" FAIL VERIFICATION "+content.getTitle());
+        }
         }catch(MalformedURLException | NetworkException | ApiException e){
             Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, e);
-            System.out.println("error summitting");
+            server.getSms().sendSms(Private.PHONE_NUMBER, content.getId()+" FAIL SUBMIT "+content.getTitle());
         }
     }
     public void addWaiting(Content content){
@@ -145,17 +153,25 @@ public void verifyContent(Submission s){
         
     }
     public void post(int id){
+        Content cF = null;
+        
         for(Content c:waiting){
             if(c.getId() == id){
                 submit(c);
-                waiting.remove(c);
+                cF = c;
+                break;
             }
         }
+        if(cF!=null)
+        waiting.remove(cF);
         for(Content c:submitted){
             if(c.getId() == id){
-                submitted.remove(c);
+                cF = c;
+                break;
             }
         }
+        if(cF!=null)
+        submitted.remove(cF);
     }
     public void addSpoiler(int id){
         try{
@@ -175,5 +191,25 @@ public void verifyContent(Submission s){
             }
         }
         }catch(Exception e){e.printStackTrace();};
+    }
+    public void remove(int id){
+        Content cF = null;
+        for(Content c:submitted){
+            if(c.getId() == id){
+                ModerationManager mod = new ModerationManager(client);
+                try {
+                    mod.delete(c.getSubmission());
+                } catch (NetworkException ex) {
+                    Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ApiException ex) {
+                    Logger.getLogger(RedditManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                cF = c;
+                break;
+            }
+        } 
+        if(cF!=null)
+        submitted.remove(cF);
+        
     }
 }

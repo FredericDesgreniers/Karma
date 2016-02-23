@@ -21,6 +21,7 @@ public class Server {
     private ContentManager contentManager;
     private DataManager data;
     private RedditManager reddit;
+    private SmsManager sms;
     
     public Server() throws SQLException{
         
@@ -31,9 +32,10 @@ public class Server {
             e.printStackTrace();
             System.exit(0);
         }
+        sms = new SmsManager(this);
         mainServer = new MainServer(this);
         contentManager = new ContentManager(this);
-       
+        sms.start();
         mainServer.start();
     }
     public ContentManager getContentManager(){
@@ -47,6 +49,9 @@ public class Server {
     }
     public RedditManager getReddit(){
         return reddit;
+    }
+    public SmsManager getSms(){
+        return sms;
     }
     
     

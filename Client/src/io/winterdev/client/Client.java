@@ -5,64 +5,65 @@
  */
 package io.winterdev.client;
 
+import io.winterdev.client.ui.ScreenMain;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
  * @author frede
  */
-public class Client {
-
-    private boolean connected = true;
-    private Socket socket;
-    PrintWriter out;
-    public Client(){
-        try{
-             socket = new Socket(Private.HOST,Private.PORT);
-              out = new PrintWriter(socket.getOutputStream());
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             
-             String input;
-             while(connected && (input = in.readLine()) !=null){
-                 try{
-                 if(input.equalsIgnoreCase("ping")){
-                     sendRaw("pong");
-                     continue;
-                 }
-                 String[] args = input.split(";;");
-                 System.out.println(input);
-                 if(args.length>1){
-                     String type = args[0];
-                     String command = args[1];
-                     
-                     switch(command){
-                         case "waiting":
-                             if(args.length>2){
-                                 String title = args[2];
-                                 int id = Integer.valueOf(args[1]);
-                                 if(type.equalsIgnoreCase("alert")) 
-                                    new AlertWaiting(this,id,title);
-                             }
-                             break;
-                     }
-                 }
-                 }catch(Exception e){e.printStackTrace();}
-             }
-        }catch(Exception e){e.printStackTrace();}
-    }
-    
-    public synchronized void sendRaw(String str){
-        out.println(str);
-        out.flush();
-    }
+public class Client extends Application{
+    private ClientNetwork network;
+    private ScreenMain mainScreen;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new Client();
+        launch(args);
     }
-    
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        network = new ClientNetwork(this);
+        network.start();
+        
+        primaryStage.setTitle("Hello World!");
+        primaryStage.setOnCloseRequest((WindowEvent t)->{
+            Platform.exit();
+            network.stop();
+            System.exit(0);
+        });
+        mainScreen = new ScreenMain(this);
+       Scene scene = new Scene(mainScreen, 1000, 1000);
+       scene.getStylesheets().add(getClass().getResource("ui/style.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+    public void post(int id){
+        network.sendRaw("post;;"+id);
+        System.out.println("posting "+id);
+    }
+    public void spoil(int id){
+        network.sendRaw("spoil;;"+id);
+        System.out.println("spoilling "+id);
+    }
+    public void remove(int id){
+        network.sendRaw("remove;;"+id);
+        System.out.println("removing "+id);
+    }
+    public ScreenMain  getMainScreen(){
+        return this.mainScreen;
+    }
 }

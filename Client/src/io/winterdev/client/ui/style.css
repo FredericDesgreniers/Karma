@@ -1,0 +1,56 @@
+
+.main{
+    -fx-background-color:#495154;
+}
+
+
+
+.list{
+    -fx-background-color:black;
+    -fx-border-color:#544C49;
+    -fx-border-width:0 2 0 0;
+    -fx-color:white;
+    -fx-pref-width:300px;
+    -fx-font-size:20px;
+}
+.listEl{
+    -fx-padding:10px;
+    -fx-cursor:hand;
+}
+.listEl:hover{
+    -fx-background-color:#3d3d3d;
+}
+elContextSub:hover{
+    -fx-background-color:white;
+}
+.elSelected{
+    -fx-background-color:#3d3d3d;
+}
+.elApprove{
+   -fx-text-fill:green;
+}
+.elRemove{
+    -fx-text-fill:red;
+}
+.elSpoil{
+    -fx-text-fill:yellow;
+}
+.elTitle{
+    -fx-text-fill:white;
+}
+.elTime{
+    -fx-text-fill:#C7C7C7;
+    -fx-font-size:15px;
+}
+
+.alertLabel{
+    -fx-color:red;
+    -fx-font-size:40px;
+    -fx-text-fill:white;
+}
+.alert{
+    -fx-background-color:red;
+}
+.notification{
+    -fx-background-color:black;
+}

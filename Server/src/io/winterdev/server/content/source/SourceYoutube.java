@@ -38,7 +38,7 @@ public class SourceYoutube extends Source{
                 checkConent(content);
             }
         } catch (IOException ex) {
-            Logger.getLogger(SourceYoutube.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SourceYoutube.class.getName()).log(Level.SEVERE, null, "");
         }
     }
 public  List<ContentYoutube> crawlChannel() throws IOException{
@@ -50,7 +50,7 @@ public  List<ContentYoutube> crawlChannel() throws IOException{
             org.jsoup.nodes.Element e = videosEl.get(i);
             for(org.jsoup.nodes.Element title: e.select(".yt-lockup-content a"))
             {
-                videos.add(new ContentYoutube(ContentManager.getUniqueId(),title.text(),title.attr("href").split("v=")[1]));
+                videos.add(new ContentYoutube(-1,title.text(),title.attr("href").split("v=")[1]));
                // System.out.println(title.attr("href")+"   "+title.text());
                 break;
             }
