@@ -26,7 +26,10 @@ public class HistoryElement extends VBox{
     
     private VBox context;
     private boolean expanded;
-            
+       public HistoryElement(HistoryBar history,int id, String title,String url,String date){
+           this(history,id,title,url);
+           time.setText(date);
+       }     
     public HistoryElement(HistoryBar history,int id, String title,String url){
         this.id = id;
         this.history = history;
@@ -82,6 +85,9 @@ public class HistoryElement extends VBox{
     public String getUrl(){
         return url;
     }
+    public String getTitle(){
+        return this.title.getText();
+    }
     public void setContext(boolean b){
         if(b){
             if(!this.getChildren().contains(context))
@@ -97,4 +103,6 @@ public class HistoryElement extends VBox{
     public void toggleContext(){
         setContext(!expanded);
     }
+    
+
 }

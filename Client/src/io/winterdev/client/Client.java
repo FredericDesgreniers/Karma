@@ -48,6 +48,7 @@ public class Client extends Application{
         mainScreen = new ScreenMain(this);
        Scene scene = new Scene(mainScreen, 1000, 1000);
        scene.getStylesheets().add(getClass().getResource("ui/style.css").toExternalForm());
+       
         primaryStage.setScene(scene);
         primaryStage.show();
     }

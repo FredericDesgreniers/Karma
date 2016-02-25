@@ -62,7 +62,7 @@ public class ClientNetwork extends Thread{
                                  if(type.equalsIgnoreCase("alert")){
                                    Platform.runLater(()->{
                                        new ScreenAlert(client,id,title,"alert");
-                                       client.getMainScreen().getHistory().addToHistory(new HistoryElement(client.getMainScreen().getHistory(),id,title,url));
+                                       client.getMainScreen().getHistory().addToHistory(0,new HistoryElement(client.getMainScreen().getHistory(),id,title,url));
                                    
                                    }) ;
                                    
@@ -81,7 +81,7 @@ public class ClientNetwork extends Thread{
                                         
                                         new ScreenAlert(client,id,title,"submitted");
                                     
-                                    client.getMainScreen().getHistory().addToHistory(new HistoryElement(client.getMainScreen().getHistory(),id,title,url));
+                                    client.getMainScreen().getHistory().addToHistory(0,new HistoryElement(client.getMainScreen().getHistory(),id,title,url));
                                     
                                     });
                                     

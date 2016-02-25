@@ -7,6 +7,8 @@ package io.winterdev.client.ui;
 
 import io.winterdev.client.Client;
 import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 /**
@@ -28,7 +31,7 @@ public class ScreenAlert extends VBox{
         Stage stage =  new Stage();
         stage.setTitle(title);
         stage.setAlwaysOnTop(true);
-        Scene scene = new Scene(this,800,500);
+        Scene scene = new Scene(this,1200,500);
         scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
         
         stage.setScene(scene);
@@ -36,6 +39,8 @@ public class ScreenAlert extends VBox{
        this.getStyleClass().add(type.equalsIgnoreCase("alert")?"alert":"notification");
         Label label = new Label(title);
         label.getStyleClass().add("alertLabel");
+        label.setWrapText(true);
+        label.setTextAlignment(TextAlignment.JUSTIFY);
         VBox.setVgrow(this, Priority.ALWAYS);
         label.setPrefWidth(Double.MAX_VALUE);
         this.getChildren().add(label);
@@ -59,21 +64,25 @@ public class ScreenAlert extends VBox{
             }
         });
         HBox options = new HBox();
+        options.setAlignment(Pos.CENTER);
         options.getStyleClass().add("alertOptions");
         
         Button post = new Button("Accept");
+        post.setCursor(Cursor.HAND);
         post.setOnAction((ActionEvent e)->{
             client.post(id);
             stage.close();
         });
         post.getStyleClass().add("alertAccept");
         Button remove = new Button("Remove");
+        remove.setCursor(Cursor.HAND);
         remove.setOnAction((ActionEvent e)->{
             client.remove(id);
             stage.close();
         });
         remove.getStyleClass().add("alertReject");
         Button spoil = new Button("Spoil");
+        spoil.setCursor(Cursor.HAND);
         spoil.setOnAction((ActionEvent e)->{
             client.spoil(id);
             stage.close();

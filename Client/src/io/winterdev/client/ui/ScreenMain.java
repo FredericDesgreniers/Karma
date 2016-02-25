@@ -36,7 +36,7 @@ public class ScreenMain extends BorderPane{
         this.setRight(alert);
         this.setCenter(browser);
         alert.setOnAction((ActionEvent e)->{
-            new ScreenAlert(client,-2,"TEST","alert");
+            new ScreenAlert(client,-2,(history.getSelected()!=null)?history.getSelected().getTitle():"THIS IS A TEST ALERT","alert");
         });
         this.getStyleClass().add("main");
         

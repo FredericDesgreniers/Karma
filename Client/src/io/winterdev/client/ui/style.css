@@ -48,7 +48,8 @@
     -fx-font-size:40px;
     -fx-text-fill:white;
     -fx-background-color:black;
-
+    -fx-border-color:white;
+    -fx-border-width:0 0 1 0;
     -fx-alignment:center;
 }
 .alert{
@@ -58,10 +59,18 @@
 .notification{
     -fx-background-color:black;
 }
-.alertOptions Button{
-    -fx-font-size:60px;
+.alertOptions{
+    -fx-background-color:white;
+    -fx-padding:5px;
     -fx-border-color:black;
-    -fx-border-width:5;
+    -fx-border-width:2 0 2 0;
+    -fx-spacing:5px;
+}
+.alertOptions Button{
+    -fx-font-size:90px;
+    -fx-border-color:black;
+    -fx-margin:5px;
+   
 
 }
 
@@ -73,15 +82,15 @@
     -fx-background-color:black;
 }
 .alertOptions .alertReject{
-    -fx-background-color:red;
+    -fx-background-color:#990000;
     -fx-text-fill:white;
 }
 .alertOptions .alertReject:hover{
     -fx-background-color:black;
 }
 .alertOptions .alertSpoil{
-    -fx-background-color:yellow;
-
+    -fx-background-color:yellowgreen;
+    -fx-text-fill:white;
 }
 .alertOptions .alertSpoil:hover{
     -fx-background-color:black;
